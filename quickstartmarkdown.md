@@ -50,7 +50,6 @@ You will need the following things before beginning:
   1. **Download the Project's GitHub Repository.** To do this workshop, you'll need to download the following Repo onto your local machine: https://github.com/astronomer/airflow-snowparkml-demo/tree/main
 1. Integrated Development Environment (IDE)
   1. **Your favorite IDE with Git integration.** If you don’t already have a favorite IDE that integrates with Git I would recommend the great, free, open-source [Visual Studio Code](https://code.visualstudio.com/).
-  1. **Your project repository cloned to your computer.** For connection details about your Git repository, open the Repository and copy the `HTTPS` link provided near the top of the page. If you have at least one file in your repository then click on the green `Code` icon near the top of the page and copy the `HTTPS` link. Use that link in VS Code or your favorite IDE to clone the repo to your computer.
 1. Docker
   1. **Docker Desktop on your laptop.**  We will be running Airflow as a container. Please install Docker Desktop on your desired OS by following the [Docker setup instructions](https://docs.docker.com/desktop/).
 
@@ -58,7 +57,7 @@ You will need the following things before beginning:
 - A Machine Learning Pipeline called "Customer Analytics" that predicts customer lifetime value based on customer sentiment
 
 <!-- ------------------------ -->
-## Set up of environment
+## Set up of environment and Repo Overview
 Duration: 2
 
 First, Clone [this repository](https://github.com/astronomer/airflow-snowparkml-demo/tree/main) and navigate into its directory in terminal, before opening the folder up in the code editor of your choice! 
@@ -68,6 +67,49 @@ git clone https://github.com/astronautyates/SnowParkMLWorkshop
 cd airflow-snowparkml-demo
 ```
 
+Since we're using so many different tools installed via the requirements/packages files, it's worth going through them so you understand the systems being used in the 'Customer Analytics' DAG
+
+Repository Contents Overview:
+
+Requirements.txt
+/tmp/airflow_provider_weaviate-1.0.0-py3-none-any.whl: This beta package allows us to connect to Weaviate for embedding generation. 
+
+/tmp/astro_provider_snowflake-0.0.0-py3-none-any.whl: This beta package allows us to connect to Snowpark.  
+
+snowflake-ml-python==1.0.7: A package that provides machine learning functionalities or integrations for Snowflake within Python.
+
+pandas~=1.5: A powerful and flexible open-source data analysis and manipulation library for Python.
+
+scikit-learn==1.3.0: A machine learning library in Python that provides simple and efficient tools for data analysis and modeling.
+
+We will also show how to use a Python virtual environment to simplify Snowpark requirements if that is necessary in your Airflow environment.  For that we will create a requirements-snowpark.txt file with the following: 
+
+psycopg2-binary: A standalone package that provides a PostgreSQL adapter.
+
+snowflake_snowpark_python[pandas]>=1.5.1: An extension of the Snowflake Python Connector that provides an intuitive, pythonic API for querying and processing data in Snowflake. 
+
+/tmp/astro_provider_snowflake-0.0.0-py3-none-any.whl: This provider simplifies the process of making secure connections to Snowflake, the process of building Airflow tasks with Snowpark code and the passing of Snowpark dataframes between tasks. 
+
+virtualenv: A tool in Python used to create isolated Python virtual environments, which we’ll need to create a 3.8 Python virtual environment to connect to Snowpark
 
 
+Packages.txt
 
+Build-essential: A collection of essential development tools, including the GNU Compiler Collection (GCC), the GNU Debugger (GDB), and other libraries and tools. It is required to compile and install many other software packages, including FFmpeg.
+
+ffmpeg: A free and open-source software project consisting of a suite of libraries and programs for handling video, audio, and other multimedia files and streams. We’ll use this to transcribe support calls with OpenAI Whisper.
+
+Step 2: 
+
+Navigate to the .env file and update the AIRFLOW_CONN_SNOWFLAKE_DEFAULT with your own credentials. These will be used to connect to Snowflake. The Snowflake account field of the connection should use the new ORG_NAME-ACCOUNT_NAME format as per Snowflake Account Identifier policies. The ORG and ACCOUNT names can be found in the confirmation email or in the Snowflake login link (ie. https://xxxxxxx-yyy11111.snowflakecomputing.com/console/login) Do not specify a region when using this format for accounts. If you need help finding your ORG_NAME-ACCOUNT_NAME, use [this guide](https://docs.snowflake.com/en/user-guide/admin-account-identifier) to find them. 
+
+NOTE: Database and Schema names should remain as DEMO, and the warehouse name should remain COMPUTE_WH. This is because the Customer_Analytics DAG will create tables with these names and reference them throughout the DAG, so if you use different names you'll need to alter the DAG code to reflect them. 
+
+AIRFLOW_CONN_SNOWFLAKE_DEFAULT='{"conn_type": "snowflake", "login": "<USER_NAME>", "password": "<PASSWORD>", "schema": "DEMO", "extra": {"account": "<ORG_NAME>-<ACCOUNT_NAME>", "warehouse": "COMPUTE_WH", "database": "DEMO", "region": "", "role": "ACCOUNTADMIN", "authenticator": "snowflake", "session_parameters": null, "application": "AIRFLOW"}}'
+
+NOTE: The use of ACCOUNTADMIN in this demo is only to simplify setup of the quickstart. It is, of course, not advisable to use this role for production.
+
+<!-- ------------------------ -->
+## Start Environment and Run DAG
+
+Now that you've gotten your environment set up, open up a terminal window in your 'airflow-snowparkml-demo' folder and run the following command: 
