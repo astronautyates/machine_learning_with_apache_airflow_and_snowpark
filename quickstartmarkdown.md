@@ -82,7 +82,8 @@ Since we're using so many different tools installed via the requirements/package
 
 Repository Contents Overview:
 
-Requirements.txt
+`Requirements.txt`
+
 /tmp/airflow_provider_weaviate-1.0.0-py3-none-any.whl: This beta package allows us to connect to Weaviate for embedding generation. 
 
 /tmp/astro_provider_snowflake-0.0.0-py3-none-any.whl: This beta package allows us to connect to Snowpark.  
@@ -101,14 +102,19 @@ snowflake_snowpark_python[pandas]>=1.5.1: An extension of the Snowflake Python C
 
 /tmp/astro_provider_snowflake-0.0.0-py3-none-any.whl: This provider simplifies the process of making secure connections to Snowflake, the process of building Airflow tasks with Snowpark code and the passing of Snowpark dataframes between tasks. 
 
-virtualenv: A tool in Python used to create isolated Python virtual environments, which we’ll need to create a 3.8 Python virtual environment to connect to Snowpark
+`virtualenv`: A tool in Python used to create isolated Python virtual environments, which we’ll need to create a 3.8 Python virtual environment to connect to Snowpark
 
 
-Packages.txt
+`Packages.txt`
 
-Build-essential: A collection of essential development tools, including the GNU Compiler Collection (GCC), the GNU Debugger (GDB), and other libraries and tools. It is required to compile and install many other software packages, including FFmpeg.
+`Build-essential`: A collection of essential development tools, including the GNU Compiler Collection (GCC), the GNU Debugger (GDB), and other libraries and tools. It is required to compile and install many other software packages, including FFmpeg.
 
-ffmpeg: A free and open-source software project consisting of a suite of libraries and programs for handling video, audio, and other multimedia files and streams. We’ll use this to transcribe support calls with OpenAI Whisper.
+`ffmpeg`: A free and open-source software project consisting of a suite of libraries and programs for handling video, audio, and other multimedia files and streams. We’ll use this to transcribe support calls with OpenAI Whisper.
+
+`docker-compose.override.yml`
+
+This file is allowing us to build a local weaviate vector database using Docker on port:8081 alongside our Airflow environment, which we'll use to store our unstructured data embeddings for efficient sentiment analysis. This method can be used to spin up many different services for easier local testing, like streamlit to visualize your data, or Minio for mimicking an S3-like filesystem. 
+
 
 Step 2: 
 
