@@ -10,7 +10,7 @@ tags: Data Engineering, Snowpark, Airflow, Machine Learning, AI
 
 # Machine Learning with Snowpark and Apache Airflow
 <!-- ------------------------ -->
-## Overview 
+## Overview  
 Duration: 5
 
 ![header](assets/machine_learning_with_apache_airflow_and_snowpark_0_header_image.png)
