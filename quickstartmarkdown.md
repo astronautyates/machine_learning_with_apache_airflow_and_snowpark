@@ -11,11 +11,14 @@ tags: Data Engineering, Snowpark, Airflow, Machine Learning, AI
 # Machine Learning with Snowpark and Apache Airflow
 <!-- ------------------------ -->
 ## Overview 
-Duration: 30
+Duration: 5
+
+![header](assets/machine_learning_with_apache_airflow_and_snowpark_0_header_image.png)
 
 Snowpark ML (in public preview) is a python framework for Machine Learning workloads with Snowpark. Currently Snowpark ML provides a model registry (storing ML tracking data and models in Snowflake tables and stages), feature engineering primitives similar to scikit-learn (ie. LabelEncoder, OneHotEncoder, etc.) and support for training and deploying certain model types as well as deployments as user-defined functions (UDFs).
 
 This virtual hands-on lab demonstrates how to use Apache Airflow to orchestrate a machine learning pipeline leveraging Snowpark ML for feature engineering and model tracking. While Snowpark ML has its own support for models similar to scikit-learn this code demonstrates a "bring-your-own" model approach showing the use of open-source scikit-learn along with Snowpark ML model registry and model serving in an Airflow task rather than Snowpark UDF. It also shows the use of the Snowflake XCOM backend which supports security and governance by serializing all task in/output to Snowflake tables and stages while storing in the Airflow XCOM table a URI pointer to the data. 
+
 
 This workflow includes:
 
@@ -69,7 +72,13 @@ git clone https://github.com/astronautyates/SnowParkMLWorkshop
 cd airflow-snowparkml-demo
 ```
 
+After you've downloaded the repo, open the `airflow-snowparkml-demo` folder in the IDE of your choice! The folder structure should look like the below:
+
+![header](assets/machine_learning_with_apache_airflow_and_snowpark_1_file_structure.png)
+
 Since we're using so many different tools installed via the requirements/packages files, it's worth going through them so you understand the systems being used in the 'Customer Analytics' DAG
+
+
 
 Repository Contents Overview:
 
