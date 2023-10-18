@@ -74,7 +74,7 @@ cd airflow-snowparkml-demo
 
 After you've downloaded the repo, open the `airflow-snowparkml-demo` folder in the IDE of your choice! The folder structure should look like the below:
 
-![header](assets/machine_learning_with_apache_airflow_and_snowpark_1_file_structure.png)
+![filestructure](assets/machine_learning_with_apache_airflow_and_snowpark_1_file_structure.png)
 
 Since we're using so many different tools installed via the requirements/packages files, it's worth going through them so you understand the systems being used in the 'Customer Analytics' DAG
 
@@ -139,20 +139,26 @@ This will build our local Airflow environment using the Docker engine and the As
 
 After you've opened the UI, unpause the `customer_analytics` DAG and press the play icon to start it! 
 
+![header](assets/machine_learning_with_apache_airflow_and_snowpark_3_airflow_ui.png)
+
 This DAG demonstrates an end-to-end application workflow to generate predictions on Customer data using OpenAI embeddings with a Weaviate vector database as well as Snowpark decorators, the Snowflake XCOM backend andthe Snowpark ML model registry. The Astro CLI can easily be adapted to include additional Docker-based services, as we did here to include services for Minio, Weaviate and streamlit.
 
 <!-- ------------------------ -->
 ## DAG Explanation
 
+![header](assets/machine_learning_with_apache_airflow_and_snowpark_2_dag_graph.png)
+
+
 Task `create_snowflake_objects`:
 Our first task creates Snowflake objects (databases, schemas, stages, etc.) prior to 
-running any tasks, since we are assuming you are starting with a fresh trial account. This is implemented using the new setup/teardown task feature, and has a corresponding clean up task at the end of the DAG. This means that no matter what, temp tables used for this project will be deleted after usage to prevent unnecessary consumption, mimicking how you might use them in a production setting! 
+running any tasks, since we are assuming you are starting with a fresh trial account. This is implemented using the new setup/teardown task feature, and has a corresponding clean up task at the end of the DAG. This means that no matter what, temp tables used for this project will be deleted after usage to prevent unnecessary consumption, mimicking how you might use them in a production setting! It also adds a handy dotted line to link the two tasks in the Airflow UI, which you can see in the above screenshot. 
  
 The DAG then runs the `enter` task group, which includes 3 tasks to set up a Weaviate database, and create a Snowpark model registry if none exists already:
 
+![header](assets/machine_learning_with_apache_airflow_and_snowpark_4_enter_task_group.png)
+
 Task `download_weaviate_backup`: 
 In order to speed up the demo process the data has already been ingested into Weaviate and vectorized.  The data was then backed up and stored in the cloud for easy restore. This task will download the backup.zip and make it available in a docker mounted filesystem for the restore_weaviate task.
-
 
 Task `restore_weaviate`: 
 This task exists only to speedup the demo in subsequent runs. By restoring prefetched embeddings to Weaviate the later tasks will skip embeddings and only make calls to OpenAI for data it hasn't yet embedded.
@@ -162,14 +168,17 @@ This task checks if a Snowpark model registry exists in the specified database a
 
 The second task group `structured_data` uses several dynamically generated task groups to load many structured datasets into our Snowflake database, before transforming them using snowpark, all in parallel. 
 
+![header](assets/machine_learning_with_apache_airflow_and_snowpark_5_structured_data_task_group.png)
+
 Task Group `load_structured_data`:
 This task group creates parallel tasks to upload many structured datasets from an Astronomer hosted S3 bucket into our Snowflake database. 
-
 
 Task Group `transform_structured`: 
 This task group uses Snowpark python to transform the structured data to get them in the proper format for the presentation layer and joining with prediction on the unstructured data and the sentiment classifier. 
 
 Our third task group, `unstructured data`, runs in parallel with the `structured data` task group to load unstructured call and twitter comment data to a Snowflake stage, before transcribing those calls and generating embeddings from this data. These embeddings are information dense representations of the semantic meaning of all of this text data, which are used for text search, text similarity, and other natural language processing tasks. 
+
+![header](assets/machine_learning_with_apache_airflow_and_snowpark_6_unstructured_data_task_group.png)
 
 The following 3 tasks are grouped into a Task group called `load_unstructured_data`
 
