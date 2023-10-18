@@ -214,4 +214,3 @@ For our final task, we’ll clear all the temporary tables we used during data p
 
 After your pipeline has finished running, go into the graph view and check the various tasks to make sure everything has run properly. Then, go into your Snowflake environment and check the newly created `PRED_CUSTOMER_CALLS` and `PRED_TWITTER_COMMENTS` to see the finished result of your model training. 
 
-After that, open the streamlit application by navigating to `localhost:8501` in your browser. This is our prediction visualizations are hosted, similarly to how an ML model is typically used to generate prediction graphs! 
