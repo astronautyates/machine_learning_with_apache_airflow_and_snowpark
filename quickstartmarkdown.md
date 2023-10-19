@@ -59,7 +59,7 @@ You will need the following things before beginning:
 - A Machine Learning Pipeline called "Customer Analytics" that predicts customer lifetime value based on customer sentiment
 
 <!-- ------------------------ -->
-## Set up of environment and Repo Overview
+## Environment setup and Repo Overview
 Duration: 2
 
 First, Clone [this repository](https://github.com/astronomer/airflow-snowparkml-demo/tree/main) and navigate into its directory in terminal, before opening the folder up in the code editor of your choice. 
@@ -69,7 +69,7 @@ git clone https://github.com/astronautyates/SnowParkMLWorkshop
 cd airflow-snowparkml-demo
 ```
 
-Since we're using so many different tools installed via the requirements/packages files, it's worth going through them so you understand the systems being used in the 'Customer Analytics' DAG
+Since we're using so many different tools installed via the requirements/packages files, it's worth going through them so you understand the systems being used in the 'Customer Analytics' DAG.
 
 Repository Contents Overview:
 
@@ -92,7 +92,7 @@ snowflake_snowpark_python[pandas]>=1.5.1: An extension of the Snowflake Python C
 
 /tmp/astro_provider_snowflake-0.0.0-py3-none-any.whl: This provider simplifies the process of making secure connections to Snowflake, the process of building Airflow tasks with Snowpark code and the passing of Snowpark dataframes between tasks. 
 
-virtualenv: A tool in Python used to create isolated Python virtual environments, which we’ll need to create a 3.8 Python virtual environment to connect to Snowpark
+virtualenv: A tool in Python used to create isolated Python virtual environments, which we’ll need to create a 3.8 Python virtual environment to connect to Snowpark.
 
 
 Packages.txt
@@ -103,7 +103,7 @@ ffmpeg: A free and open-source software project consisting of a suite of librari
 
 Step 2: 
 
-Navigate to the .env file and update the AIRFLOW_CONN_SNOWFLAKE_DEFAULT with your own credentials. These will be used to connect to Snowflake. The Snowflake account field of the connection should use the new ORG_NAME-ACCOUNT_NAME format as per Snowflake Account Identifier policies. The ORG and ACCOUNT names can be found in the confirmation email or in the Snowflake login link (ie. https://xxxxxxx-yyy11111.snowflakecomputing.com/console/login) Do not specify a region when using this format for accounts. If you need help finding your ORG_NAME-ACCOUNT_NAME, use [this guide](https://docs.snowflake.com/en/user-guide/admin-account-identifier) to find them. 
+Navigate to the .env file and update the AIRFLOW_CONN_SNOWFLAKE_DEFAULT with your own credentials. These will be used to connect to Snowflake. The Snowflake `account` field of the connection should use the new ORG_NAME-ACCOUNT_NAME format as per Snowflake Account Identifier policies. The ORG and ACCOUNT names can be found in the confirmation email or in the Snowflake login link (ie. https://xxxxxxx-yyy11111.snowflakecomputing.com/console/login) Do not specify a region when using this format for accounts. If you need help finding your ORG_NAME-ACCOUNT_NAME, use [this guide](https://docs.snowflake.com/en/user-guide/admin-account-identifier). 
 
 NOTE: Database and Schema names should remain as DEMO, and the warehouse name should remain COMPUTE_WH. This is because the Customer_Analytics DAG will create tables with these names and reference them throughout the DAG, so if you use different names you'll need to alter the DAG code to reflect them. 
 
@@ -112,7 +112,7 @@ AIRFLOW_CONN_SNOWFLAKE_DEFAULT='{"conn_type": "snowflake", "login": "<USER_NAME>
 NOTE: The use of ACCOUNTADMIN in this demo is only to simplify setup of the quickstart. It is, of course, not advisable to use this role for production.
 
 <!-- ------------------------ -->
-## Start Environment and Run DAG
+## Start Environment and Run the DAG
 
 Now that you've gotten your environment set up, open up a terminal window in your 'airflow-snowparkml-demo' folder and run the following command: 
 
@@ -122,25 +122,25 @@ astro dev start
 
 This will build our local Airflow environment using the Docker engine and the Astro CLI. After your Airflow environment has finished starting up, open up the UI by navigating to localhost:8080 in the browser and use admin/admin as the username/password to login. 
 
-After you've opened the UI, unpause the 'customer_analytics' DAG and press the play icon to start it! 
+After you've opened the UI, unpause the 'customer_analytics' DAG and press the play icon to start it. 
 
-This DAG demonstrates an end-to-end application workflow to generate predictions on Customer data using OpenAI embeddings with a Weaviate vector database as well as Snowpark decorators, the Snowflake XCOM backend andthe Snowpark ML model registry. The Astro CLI can easily be adapted to include additional Docker-based services, as we did here to include services for Minio, Weaviate and streamlit.
+This DAG demonstrates an end-to-end application workflow to generate predictions on customer data using OpenAI embeddings with a Weaviate vector database as well as Snowpark decorators, the Snowflake XCom backend and the Snowpark ML model registry. The Astro CLI can easily be adapted to include additional Docker-based services, as we did here to include services for Minio, Weaviate and streamlit.
 
 <!-- ------------------------ -->
 ## DAG Explanation
 
 Task ‘create_snowflake_objects’:
 Our first task creates Snowflake objects (databases, schemas, stages, etc.) prior to 
-running any tasks, since we are assuming you are starting with a fresh trial account. This is implemented using the new setup/teardown task feature, and has a corresponding clean up task at the end of the DAG. This means that no matter what, temp tables used for this project will be deleted after usage to prevent unnecessary consumption, mimicking how you might use them in a production setting! 
+running any tasks, since we are assuming you are starting with a fresh trial account. This is implemented using the new setup/teardown task feature, and has a corresponding clean up task at the end of the DAG. This means that no matter what, temp tables used for this project will be deleted after usage to prevent unnecessary consumption, mimicking how you might use them in a production setting. 
  
 The DAG then runs the “enter” task group, which includes 3 tasks to set up a Weaviate database, and create a Snowpark model registry if none exists already:
 
 Task download_weaviate_backup: 
-In order to speed up the demo process the data has already been ingested into Weaviate and vectorized.  The data was then backed up and stored in the cloud for easy restore. This task will download the backup.zip and make it available in a docker mounted filesystem for the restore_weaviate task.
+In order to speed up the demo process, the data has already been ingested into Weaviate and vectorized.  The data was then backed up and stored in the cloud for easy restore. This task will download the backup .zip and make it available in a docker mounted filesystem for the restore_weaviate task.
 
 
 Task restore_weaviate: 
-This task exists only to speedup the demo in subsequent runs. By restoring prefetched embeddings to Weaviate the later tasks will skip embeddings and only make calls to OpenAI for data it hasn't yet embedded.
+This task exists to speedup the demo in subsequent runs. By restoring prefetched embeddings to Weaviate the later tasks will skip embeddings and only make calls to OpenAI for data it hasn't yet embedded.
 
 Task check_model_registry:
 This task checks if a Snowpark model registry exists in the specified database and schema. If not, it creates one and returns a dictionary containing the database and schema information.
@@ -188,7 +188,7 @@ For our final task, we’ll backup our embeddings within our Weaviate database t
 <!-- ------------------------ -->
 ## Monitoring Results
 
-After your pipeline has finished running, go into the graph view and check the various tasks to make sure everything has run properly. Then, go into your Snowflake environment and check the newly created PRED_CUSTOMER_CALLS and PRED_TWITTER_COMMENTS to see the finished result of your model training. 
+After your pipeline has finished running, go into the grid view and check that all tasks ran successfully. Then, go into your Snowflake environment and check the newly created PRED_CUSTOMER_CALLS and PRED_TWITTER_COMMENTS to see the finished result of your model training. 
 
 After that, open the streamlit application by navigating to localhost:8501 in your browser. This is our prediction visualizations are hosted, similarly to how an ML model is typically used to generate prediction graphs! 
 
