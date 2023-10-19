@@ -212,5 +212,8 @@ For our final task, we’ll clear all the temporary tables we used during data p
 <!-- ------------------------ -->
 ## Monitoring Results
 
-After your pipeline has finished running, go into the graph view and check the various tasks to make sure everything has run properly. Then, go into your Snowflake environment and check the newly created `PRED_CUSTOMER_CALLS` and `PRED_TWITTER_COMMENTS` to see the finished result of your model training. 
+After your pipeline has finished running, go into the graph view and check the various tasks to make sure everything has run properly. Then, go into your Snowflake environment and check the newly created `PRED_CUSTOMER_CALLS` and `PRED_TWITTER_COMMENTS` to see the finished result of your model training. They should look like the examples below:
+
+![header](assets/machine_learning_with_apache_airflow_and_snowpark_7_pred_table1.png)
+![header](assets/machine_learning_with_apache_airflow_and_snowpark_8_pred_table2.png)
 
